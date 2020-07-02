@@ -350,7 +350,16 @@ RUN set -xe; \
 
 WORKDIR  ${PHP_BUILD_DIR}/
 
-RUN LD_LIBRARY_PATH= yum install -y readline-devel gettext-devel libicu-devel libxslt-devel ImageMagick-devel
+RUN LD_LIBRARY_PATH= yum install -y readline-devel gettext-devel libicu-devel libxslt-devel ImageMagick-devel krb5-devel pam-devel libc-client-devel
+
+RUN ln -s /usr/lib64/libc-client.so ${INSTALL_DIR}/lib64 \
+&& ln -s /usr/lib64/libc-client.so /usr/lib/ \
+&& ln -s /usr/lib64/libc.so ${INSTALL_DIR}/lib64 \
+&& ln -s /usr/lib64/libc.so /usr/lib/ \
+&& ln -s /usr/lib64/libc-client.so.2007 ${INSTALL_DIR}/lib64 \
+&& ln -s /usr/lib64/libc-client.so.2007 /usr/lib/ \
+&& ln -s /usr/lib64/libc-nonshared.a ${INSTALL_DIR}/lib64 \
+&& ln -s /usr/lib64/libc-nonshared.a /usr/lib/ 
 
 RUN set -xe \
  && ./buildconf --force \
@@ -391,7 +400,8 @@ RUN set -xe \
         --enable-zip \
         --with-pdo-pgsql=shared,${INSTALL_DIR} \
         --enable-intl=shared \
-        --enable-opcache-file
+        --enable-opcache-file \
+        --with-imap-ssl      --with-kerberos     --with-imap
 
 RUN make -j $(nproc)
 
